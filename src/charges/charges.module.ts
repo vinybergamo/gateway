@@ -13,11 +13,11 @@ import { ChargesRepository } from './charges.repository';
     TypeOrmModule.forFeature([Charge, Customer]),
     OpenPixModule.register({
       // Stage:
-      appId:
-        'Q2xpZW50X0lkXzE1MmQxNDMzLTRmODctNDcwNC05YjA0LThlN2Y0ZDc4NDVkNzpDbGllbnRfU2VjcmV0X29JYWhldWtmaThBdy9hU0pmSzlJK3ZNT21RYzhIVjhUWnlxdkx1cHhiU1k9',
-      // Production:
       // appId:
-      //   'Q2xpZW50X0lkXzVkNzY4Y2IwLTJjYjAtNDhhNi04MzhmLWFmZDVhN2UyMjgwMTpDbGllbnRfU2VjcmV0X2ZTZXdOU1J1TmlTUGVTUWp4aFNPMEloMGlNdHNxaWRDeUdMVTUzWDdOOWc9',
+      //   'Q2xpZW50X0lkXzE1MmQxNDMzLTRmODctNDcwNC05YjA0LThlN2Y0ZDc4NDVkNzpDbGllbnRfU2VjcmV0X29JYWhldWtmaThBdy9hU0pmSzlJK3ZNT21RYzhIVjhUWnlxdkx1cHhiU1k9',
+      // Production:
+      appId:
+        'Q2xpZW50X0lkXzVkNzY4Y2IwLTJjYjAtNDhhNi04MzhmLWFmZDVhN2UyMjgwMTpDbGllbnRfU2VjcmV0X2ZTZXdOU1J1TmlTUGVTUWp4aFNPMEloMGlNdHNxaWRDeUdMVTUzWDdOOWc9',
     }),
   ],
   controllers: [ChargesController],
