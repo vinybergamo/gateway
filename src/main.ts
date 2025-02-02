@@ -14,12 +14,13 @@ async function bootstrap() {
   const config = app.get(ConfigService);
   const port = config.get('PORT', 3333);
   const reflector = app.get(Reflector);
+  const version = config.get<string>('VERSION', '1');
 
   app.enableCors();
   app.setGlobalPrefix('api');
   app.enableVersioning({
     type: VersioningType.URI,
-    defaultVersion: '1',
+    defaultVersion: version,
     prefix: 'v',
   });
   app.useGlobalPipes(
