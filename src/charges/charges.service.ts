@@ -53,6 +53,7 @@ export class ChargesService {
 
     const charge = await this.chargesRepository.create({
       ...createChargeDto,
+      status: 'PENDING',
       amount: createChargeDto.amount,
       correlationID: createChargeDto.correlationID ?? randomUUID(),
       description: createChargeDto.description,
@@ -150,7 +151,7 @@ export class ChargesService {
 
       if (existsPix.status === 'ACTIVE') {
         return this.chargesRepository.update(charge.id, {
-          status: 'PIX:WAITING_PAYMENT',
+          status: 'PIX:PENDING',
           transactionID: existsPix.transactionID,
           pix: existsPix.paymentMethods.pix,
           fee: existsPix.fee,
@@ -171,7 +172,7 @@ export class ChargesService {
     });
 
     return this.chargesRepository.update(charge.id, {
-      status: 'PIX:WAITING_PAYMENT',
+      status: 'PIX:PEDING',
       transactionID: pix.transactionID,
       gatewayID: pix.correlationID,
       pix: pix.paymentMethods.pix,
