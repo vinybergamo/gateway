@@ -1,3 +1,4 @@
+import { Transform } from 'class-transformer';
 import { IsArray, IsOptional, IsPositive, IsString } from 'class-validator';
 
 export class CreateChargeDto {
@@ -21,6 +22,7 @@ export class CreateChargeDto {
   description: string;
 
   @IsString()
+  @Transform(({ value }: { value: string }) => value.toUpperCase())
   gateway: string;
 
   @IsArray()

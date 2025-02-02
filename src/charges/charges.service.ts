@@ -11,6 +11,10 @@ import { randomUUID } from 'crypto';
 import { Charge } from './entities/charge.entity';
 import { PayChargeDto } from './entities/pay.dto';
 
+const avaliableGatewayPaymentMethods = {
+  OPENPIX: ['PIX'],
+} as const;
+
 @Injectable()
 export class ChargesService {
   constructor(
@@ -29,26 +33,43 @@ export class ChargesService {
   }
 
   async create(createChargeDto: CreateChargeDto) {
+    const isValidGateway = this.validatePaymentMethods(
+      createChargeDto.gateway,
+      createChargeDto.methods,
+    );
+
+    if (!isValidGateway.isGatewayValid) {
+      throw new BadRequestException(
+        'INVALID_GATEWAY',
+        `Accepted: ${isValidGateway.validsGateways.join(', ')}`,
+      );
+    }
+
+    if (!isValidGateway.isMethodsValid) {
+      throw new BadRequestException(
+        'INVALID_PAYMENT_METHODS',
+        `Accepted: ${isValidGateway.accepteds.join(', ')}; Invalid: ${isValidGateway.invalidsMethods.join(
+          ', ',
+        )}`,
+      );
+    }
+
+    if (createChargeDto.correlationID) {
+      const existsCharge = await this.chargesRepository.findOne({
+        correlationID: createChargeDto.correlationID,
+      });
+
+      if (existsCharge) {
+        throw new BadRequestException('CHARGE_ALREADY_EXISTS');
+      }
+    }
+
     const customer = await this.customersRepository.findByCorrelationId(
       createChargeDto.customerId,
     );
 
     if (!!createChargeDto.customerId && !customer) {
       throw new NotFoundException('CUSTOMER_NOT_FOUND');
-    }
-
-    const isValidPaymentMethods = this.validateGatewayPaymetMethods(
-      createChargeDto.gateway,
-      createChargeDto.methods,
-    );
-
-    if (!isValidPaymentMethods.isValid) {
-      throw new BadRequestException(
-        'INVALID_PAYMENT_METHODS',
-        `Accepted: ${isValidPaymentMethods.accepteds.join(', ')}; Invalid: ${isValidPaymentMethods.invalids.join(
-          ', ',
-        )}`,
-      );
     }
 
     const charge = await this.chargesRepository.create({
@@ -69,15 +90,14 @@ export class ChargesService {
       correlationID: chargeId,
     });
 
-    const isValidPaymentMethods = this.validatePaymentMethods(
-      [paymentMethod.method],
-      charge.methods,
-    );
+    const isValidPaymentMethods = this.validatePaymentMethods(charge.gateway, [
+      paymentMethod.method,
+    ]);
 
-    if (!isValidPaymentMethods.isValid) {
+    if (!isValidPaymentMethods.isMethodsValid) {
       throw new BadRequestException(
         'INVALID_PAYMENT_METHOD',
-        `Accepted: ${isValidPaymentMethods.accepteds.join(', ')}; Invalid: ${isValidPaymentMethods.invalids.join(
+        `Accepted: ${isValidPaymentMethods.accepteds.join(', ')}; Invalid: ${isValidPaymentMethods.invalidsMethods.join(
           ', ',
         )}`,
       );
@@ -118,17 +138,33 @@ export class ChargesService {
   validateGatewayPaymetMethods(gateway: string, paymentMethods: string[]) {
     switch (gateway) {
       case 'OPENPIX':
-        return this.validatePaymentMethods(paymentMethods, ['PIX']);
+        return this.validatePaymentMethods(gateway, paymentMethods);
     }
   }
 
-  validatePaymentMethods(methods: string[], accepteds: string[]) {
-    const isValid = methods.every((method) => accepteds.includes(method));
+  validatePaymentMethods(gateway: string, methods: string[]) {
+    const isValidGateway = gateway in avaliableGatewayPaymentMethods;
+
+    if (!isValidGateway) {
+      return {
+        isGatewayValid: false,
+        validsGateways: Object.keys(avaliableGatewayPaymentMethods),
+      };
+    }
+
+    const acceptedMethods = avaliableGatewayPaymentMethods[gateway];
+    const invalids = methods.filter(
+      (method) => !acceptedMethods.includes(method),
+    );
+
+    const isValid = invalids.length === 0;
 
     return {
-      isValid,
-      accepteds,
-      invalids: methods.filter((method) => !accepteds.includes(method)),
+      isGatewayValid: isValidGateway,
+      isMethodsValid: isValid,
+      validsGateways: Object.keys(avaliableGatewayPaymentMethods),
+      invalidsMethods: invalids,
+      accepteds: acceptedMethods,
     };
   }
 
