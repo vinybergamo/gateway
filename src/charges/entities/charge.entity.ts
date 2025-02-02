@@ -50,6 +50,9 @@ export class Charge extends BaseSchema {
   expiresDate: Date;
 
   @Column({ nullable: true })
+  dueDate: string;
+
+  @Column({ nullable: true })
   paidAt: string;
 
   @Column({ nullable: true, type: 'jsonb' })

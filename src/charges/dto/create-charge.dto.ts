@@ -26,4 +26,8 @@ export class CreateChargeDto {
   @IsArray()
   @IsString({ each: true })
   methods: string[];
+
+  @IsString()
+  @IsOptional()
+  dueDate: string;
 }
