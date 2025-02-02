@@ -14,6 +14,7 @@ export class ChargesController {
     return this.chargesService.findOneOrFail(chargeId);
   }
 
+  @IsPublic()
   @Post()
   async createCharge(@Body() createChargeDto: CreateChargeDto) {
     return this.chargesService.create(createChargeDto);
