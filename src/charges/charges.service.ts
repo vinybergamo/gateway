@@ -19,6 +19,15 @@ export class ChargesService {
     private readonly chargesRepository: ChargesRepository,
   ) {}
 
+  async findOneOrFail(chargeId: string) {
+    return this.chargesRepository.findOneOrFail(
+      { correlationID: chargeId },
+      {
+        relations: ['customer'],
+      },
+    );
+  }
+
   async create(createChargeDto: CreateChargeDto) {
     const customer = await this.customersRepository.findByCorrelationId(
       createChargeDto.customerId,
@@ -135,8 +144,6 @@ export class ChargesService {
       .catch(() => null);
 
     if (existsPix) {
-      console.log('existsPix', existsPix);
-
       if (existsPix.status === 'COMPLETED') {
         return this.openPixMarkPaid(charge.gatewayID);
       }

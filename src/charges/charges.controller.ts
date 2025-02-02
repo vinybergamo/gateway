@@ -1,4 +1,4 @@
-import { Body, Controller, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { ChargesService } from './charges.service';
 import { CreateChargeDto } from './dto/create-charge.dto';
 import { PayChargeDto } from './entities/pay.dto';
@@ -6,6 +6,11 @@ import { PayChargeDto } from './entities/pay.dto';
 @Controller('charges')
 export class ChargesController {
   constructor(private readonly chargesService: ChargesService) {}
+
+  @Get(':chargeId')
+  async getCharge(@Param('chargeId') chargeId: string) {
+    return this.chargesService.findOneOrFail(chargeId);
+  }
 
   @Post()
   async createCharge(@Body() createChargeDto: CreateChargeDto) {
