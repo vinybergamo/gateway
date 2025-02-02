@@ -135,6 +135,24 @@ export class ChargesService {
       .catch(() => null);
 
     if (existsPix) {
+      console.log('existsPix', existsPix);
+
+      if (existsPix.status === 'COMPLETED') {
+        return this.openPixMarkPaid(charge.gatewayID);
+      }
+
+      if (existsPix.status === 'ACTIVE') {
+        return this.chargesRepository.update(charge.id, {
+          status: 'PIX:WAITING_PAYMENT',
+          transactionID: existsPix.transactionID,
+          pix: existsPix.paymentMethods.pix,
+          fee: existsPix.fee,
+          expiresIn: existsPix.expiresIn,
+          metadata: existsPix,
+          expiresDate: existsPix.expiresDate,
+        });
+      }
+
       await this.openPixService.charge.delete(charge.gatewayID);
     }
 
