@@ -172,7 +172,7 @@ export class ChargesService {
     });
 
     return this.chargesRepository.update(charge.id, {
-      status: 'PIX:PEDING',
+      status: 'PIX:PENDING',
       transactionID: pix.transactionID,
       gatewayID: pix.correlationID,
       pix: pix.paymentMethods.pix,
