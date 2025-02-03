@@ -74,7 +74,7 @@ export class ChargesService {
 
     const charge = await this.chargesRepository.create({
       ...createChargeDto,
-      status: 'PENDING',
+      status: `PENDING`,
       amount: createChargeDto.amount,
       correlationID: createChargeDto.correlationID ?? randomUUID(),
       description: createChargeDto.description,
@@ -103,7 +103,7 @@ export class ChargesService {
       );
     }
 
-    const status = charge.status.split(':')[1] ?? charge.status;
+    const status = charge.status;
 
     if (status === 'PAID') {
       throw new BadRequestException('CHARGE_ALREADY_PAID');
@@ -127,7 +127,8 @@ export class ChargesService {
     }
 
     return this.chargesRepository.update(charge.id, {
-      status: 'PIX:PAID',
+      status: 'PAID',
+      paymentMethod: 'PIX',
       pix: pix.paymentMethods.pix,
       metadata: pix,
       endToEndId: transaction.endToEndId,
@@ -176,6 +177,8 @@ export class ChargesService {
   }
 
   private async openPixCharge(charge: Charge) {
+    const status = charge.status;
+    const newStatus = status && 'DEFEATED' ? charge.status : 'PENDING';
     const existsPix = await this.openPixService.charge
       .get(charge.gatewayID)
       .catch(() => null);
@@ -187,7 +190,7 @@ export class ChargesService {
 
       if (existsPix.status === 'ACTIVE') {
         return this.chargesRepository.update(charge.id, {
-          status: 'PIX:PENDING',
+          status: newStatus,
           transactionID: existsPix.transactionID,
           pix: existsPix.paymentMethods.pix,
           fee: existsPix.fee,
@@ -208,7 +211,7 @@ export class ChargesService {
     });
 
     return this.chargesRepository.update(charge.id, {
-      status: 'PIX:PENDING',
+      status: newStatus,
       transactionID: pix.transactionID,
       gatewayID: pix.correlationID,
       pix: pix.paymentMethods.pix,

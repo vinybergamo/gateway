@@ -6,6 +6,7 @@ import { AuthModule } from './auth/auth.module';
 import { ChargesModule } from './charges/charges.module';
 import { CustomersModule } from './customers/customers.module';
 import { WebhookModule } from './webhook/webhook.module';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { WebhookModule } from './webhook/webhook.module';
         '.env.local',
       ],
     }),
+    ScheduleModule.forRoot(),
     DatabaseModule,
     UsersModule,
     AuthModule,

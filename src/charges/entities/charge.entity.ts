@@ -40,6 +40,9 @@ export class Charge extends BaseSchema {
   @Column({ type: 'text', array: true })
   methods: string[];
 
+  @Column({ nullable: true })
+  paymentMethod: string;
+
   @Column({ nullable: true, default: 'CREATED' })
   status: string;
 

@@ -18,6 +18,8 @@ export class WebhookService {
     switch (event) {
       case 'paid':
         return this.chargePaid(body);
+      default:
+        return this.saveWebhook(event, body);
     }
   }
 
