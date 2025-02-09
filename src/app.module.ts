@@ -7,6 +7,7 @@ import { ChargesModule } from './charges/charges.module';
 import { CustomersModule } from './customers/customers.module';
 import { WebhookModule } from './webhook/webhook.module';
 import { ScheduleModule } from '@nestjs/schedule';
+import { FormatsModule } from './formats/formats.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { ScheduleModule } from '@nestjs/schedule';
     ChargesModule,
     CustomersModule,
     WebhookModule,
+    FormatsModule,
   ],
 })
 export class AppModule {}
