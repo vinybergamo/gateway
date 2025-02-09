@@ -1,10 +1,12 @@
 import { Controller, Get, Query } from '@nestjs/common';
 import { FormatsService } from './formats.service';
+import { IsPublic } from '@/helpers/decorators/is-public.decorator';
 
 @Controller('formats')
 export class FormatsController {
   constructor(private readonly formatsService: FormatsService) {}
 
+  @IsPublic()
   @Get('currency')
   async currency(
     @Query('value') value: string,
