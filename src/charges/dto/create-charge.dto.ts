@@ -32,4 +32,8 @@ export class CreateChargeDto {
   @IsString()
   @IsOptional()
   dueDate: string;
+
+  @IsPositive()
+  @IsOptional()
+  expiresIn: number;
 }

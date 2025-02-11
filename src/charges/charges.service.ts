@@ -85,6 +85,24 @@ export class ChargesService {
     return charge;
   }
 
+  async refund(correlationID: string) {
+    const charge = await this.chargesRepository.findOneOrFail({
+      correlationID,
+    });
+
+    if (charge.status === 'REFUNDED') {
+      throw new BadRequestException('CHARGE_ALREADY_REFUNDED');
+    }
+
+    if (charge.status !== 'PAID') {
+      throw new BadRequestException('CHARGE_NOT_PAID');
+    }
+
+    return this.chargesRepository.update(charge.id, {
+      status: 'REFUNDED',
+    });
+  }
+
   async pay(chargeId: string, paymentMethod: PayChargeDto) {
     const charge = await this.chargesRepository.findOneOrFail({
       correlationID: chargeId,
@@ -109,7 +127,7 @@ export class ChargesService {
       throw new BadRequestException('CHARGE_ALREADY_PAID');
     }
 
-    return this.choosePaymentGateway(charge);
+    return this.choosePaymentGateway(charge, 'PAY');
   }
 
   async openPixMarkPaid(chargeId: string) {
@@ -169,10 +187,21 @@ export class ChargesService {
     };
   }
 
-  private choosePaymentGateway(charge: Charge) {
+  private choosePaymentGateway(charge: Charge, operation: string) {
     switch (charge.gateway) {
       case 'OPENPIX':
+        return this.choosenOpenPixOperation(charge, operation);
+      default:
+        throw new BadRequestException('INVALID_GATEWAY');
+    }
+  }
+
+  private choosenOpenPixOperation(charge: Charge, operation: string) {
+    switch (operation) {
+      case 'PAY':
         return this.openPixCharge(charge);
+      case 'REFUND':
+        return this.openPixRefund(charge);
     }
   }
 
@@ -221,4 +250,6 @@ export class ChargesService {
       expiresDate: pix.expiresDate,
     });
   }
+
+  async openPixRefund(charge: Charge) {}
 }
