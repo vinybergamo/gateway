@@ -143,7 +143,7 @@ export class ChargesService {
 
     const pix = await this.openPixService.charge.get(charge.gatewayID);
     const transaction = await this.openPixService.transaction.get(
-      pix.transactionID,
+      pix.paymentMethods.pix.transactionID,
     );
 
     if (pix.status !== 'COMPLETED') {
