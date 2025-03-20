@@ -9,7 +9,7 @@ import { CustomersRepository } from '@/customers/customers.repository';
 import { ChargesRepository } from './charges.repository';
 import { randomUUID } from 'crypto';
 import { Charge } from './entities/charge.entity';
-import { PayChargeDto } from './entities/pay.dto';
+import { PayChargeDto } from './dto/pay.dto';
 
 const avaliableGatewayPaymentMethods = {
   OPENPIX: ['PIX'],
@@ -22,6 +22,12 @@ export class ChargesService {
     private readonly customersRepository: CustomersRepository,
     private readonly chargesRepository: ChargesRepository,
   ) {}
+
+  async findAll() {
+    return this.chargesRepository.findAll({
+      relations: ['customer'],
+    });
+  }
 
   async findOneOrFail(chargeId: string) {
     return this.chargesRepository.findOneOrFail(
@@ -251,5 +257,7 @@ export class ChargesService {
     });
   }
 
-  async openPixRefund(charge: Charge) {}
+  async openPixRefund(charge: Charge) {
+    return charge;
+  }
 }
