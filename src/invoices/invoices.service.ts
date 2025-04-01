@@ -78,7 +78,7 @@ export class InvoicesService {
       return;
     }
 
-    const request = this.httpService.get(`/v2/nfse/${invoice.uuid}`);
+    const request = this.httpService.get(`/v2/nfse/${invoice.correlationID}`);
 
     const { data } = await firstValueFrom(request);
 
