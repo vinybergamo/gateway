@@ -83,7 +83,7 @@ export class InvoicesService {
     const { data } = await firstValueFrom(request);
 
     if (data.status === 'autorizado') {
-      await this.invoicesRepository.update(invoice.correlationID, {
+      await this.invoicesRepository.update(invoice.id, {
         status: 'AUTHORIZED',
         rpsNumber: data.numero_rps,
         rpsSeries: data.serie_rps,
