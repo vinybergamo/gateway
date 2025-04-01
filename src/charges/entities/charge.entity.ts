@@ -1,6 +1,14 @@
-import { BeforeInsert, BeforeUpdate, Column, Entity, ManyToOne } from 'typeorm';
+import {
+  BeforeInsert,
+  BeforeUpdate,
+  Column,
+  Entity,
+  ManyToOne,
+  OneToOne,
+} from 'typeorm';
 import { BaseSchema } from 'src/database/base-schema';
 import { Customer } from '@/customers/entities/customer.entity';
+import { Invoice } from '@/invoices/entities/invoice.entity';
 
 @Entity()
 export class Charge extends BaseSchema {
@@ -66,6 +74,9 @@ export class Charge extends BaseSchema {
 
   @ManyToOne(() => Customer, (customer) => customer.charges)
   customer: Customer;
+
+  @OneToOne(() => Invoice, (invoice) => invoice.charge)
+  invoice: Invoice;
 
   @BeforeInsert()
   setDefaults() {

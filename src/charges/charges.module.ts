@@ -8,6 +8,7 @@ import { CustomersRepository } from '@/customers/customers.repository';
 import { ChargesRepository } from './charges.repository';
 import { OpenPixModule } from 'openpix-nestjs';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { InvoicesModule } from '@/invoices/invoices.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
         };
       },
     }),
+    InvoicesModule,
   ],
   controllers: [ChargesController],
   providers: [ChargesService, ChargesRepository, CustomersRepository],

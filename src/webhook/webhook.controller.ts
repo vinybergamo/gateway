@@ -16,4 +16,15 @@ export class WebhookController {
 
     return { message: 'Event received' };
   }
+
+  @IsPublic()
+  @Post('invoices/:event')
+  handleInvoiceEvent(
+    @Param('event') event: string,
+    @Body() body: Record<string, any>,
+  ) {
+    this.webhookService.handleInvoiceEvent(event, body);
+
+    return { message: 'Event received' };
+  }
 }

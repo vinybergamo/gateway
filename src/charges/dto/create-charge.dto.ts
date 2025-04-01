@@ -1,5 +1,17 @@
 import { Transform } from 'class-transformer';
-import { IsArray, IsOptional, IsPositive, IsString } from 'class-validator';
+import {
+  IsArray,
+  IsEnum,
+  IsOptional,
+  IsPositive,
+  IsString,
+  ValidateIf,
+} from 'class-validator';
+
+enum InvoiceTimingEnum {
+  BEFORE = 'BEFORE',
+  AFTER = 'AFTER',
+}
 
 export class CreateChargeDto {
   @IsString()
@@ -17,7 +29,7 @@ export class CreateChargeDto {
   @IsPositive()
   amount: number;
 
-  @IsOptional()
+  @ValidateIf((o) => o.issueInvoice !== undefined)
   @IsString()
   description: string;
 
@@ -36,4 +48,8 @@ export class CreateChargeDto {
   @IsPositive()
   @IsOptional()
   expiresIn: number;
+
+  @IsOptional()
+  @IsEnum(InvoiceTimingEnum)
+  issueInvoice: InvoiceTimingEnum;
 }

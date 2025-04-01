@@ -1,3 +1,4 @@
+import { InvoicesService } from './../invoices/invoices.service';
 import {
   BadRequestException,
   Injectable,
@@ -21,6 +22,7 @@ export class ChargesService {
     private readonly openPixService: OpenPixService,
     private readonly customersRepository: CustomersRepository,
     private readonly chargesRepository: ChargesRepository,
+    private readonly invoicesService: InvoicesService,
   ) {}
 
   async findAll() {
@@ -87,6 +89,17 @@ export class ChargesService {
       liqAmount: createChargeDto.amount,
       customer,
     });
+
+    if (
+      createChargeDto.issueInvoice &&
+      createChargeDto.issueInvoice === 'BEFORE'
+    ) {
+      const invoice = await this.invoicesService.createPerCharge(
+        charge,
+        customer,
+      );
+      charge.invoice = invoice;
+    }
 
     return charge;
   }

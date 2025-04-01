@@ -8,6 +8,7 @@ import { CustomersModule } from './customers/customers.module';
 import { WebhookModule } from './webhook/webhook.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { FormatsModule } from './formats/formats.module';
+import { InvoicesModule } from './invoices/invoices.module';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { FormatsModule } from './formats/formats.module';
     CustomersModule,
     WebhookModule,
     FormatsModule,
+    InvoicesModule,
   ],
 })
 export class AppModule {}

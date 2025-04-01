@@ -3,6 +3,7 @@ import { Inject, Injectable, Scope } from '@nestjs/common';
 import { WebhookRepository } from './webhook.repository';
 import { REQUEST } from '@nestjs/core';
 import { Request } from 'express';
+import { InvoicesService } from '@/invoices/invoices.service';
 
 @Injectable({
   scope: Scope.REQUEST,
@@ -11,6 +12,7 @@ export class WebhookService {
   constructor(
     private readonly webhookRepository: WebhookRepository,
     private readonly chargesService: ChargesService,
+    private readonly invoicesService: InvoicesService,
     @Inject(REQUEST) private readonly request: Request,
   ) {}
 
@@ -20,6 +22,21 @@ export class WebhookService {
         return this.chargePaid(body);
       default:
         return this.saveWebhook(event, body);
+    }
+  }
+
+  handleInvoiceEvent(event: string, body: Record<string, any>) {
+    this.saveWebhook(event, body);
+    switch (event) {
+      case 'nfse':
+        return this.handleNfseEvent(body);
+    }
+  }
+
+  async handleNfseEvent(body: Record<string, any>) {
+    switch (body.status) {
+      case 'autorizado':
+        return this.invoicesService.markAsAuthorized(body.ref);
     }
   }
 

@@ -1,6 +1,7 @@
 import { Column, Entity, OneToMany } from 'typeorm';
 import { BaseSchema } from 'src/database/base-schema';
 import { Charge } from '@/charges/entities/charge.entity';
+import { Invoice } from '@/invoices/entities/invoice.entity';
 
 @Entity()
 export class Customer extends BaseSchema {
@@ -24,4 +25,7 @@ export class Customer extends BaseSchema {
 
   @OneToMany(() => Charge, (charge) => charge.customer)
   charges: Charge[];
+
+  @OneToMany(() => Invoice, (invoice) => invoice.customer)
+  invoices: Invoice[];
 }
