@@ -1,16 +1,20 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
 import { ChargesService } from './charges.service';
 import { CreateChargeDto } from './dto/create-charge.dto';
 import { PayChargeDto } from './dto/pay.dto';
 import { IsPublic } from '@/helpers/decorators/is-public.decorator';
+import { Paginate, PaginateQuery } from 'nestjs-paginate';
 
 @Controller('charges')
 export class ChargesController {
   constructor(private readonly chargesService: ChargesService) {}
 
   @Get()
-  async getCharges() {
-    return this.chargesService.findAll();
+  async getCharges(
+    @Paginate() paginate: PaginateQuery,
+    @Query('relations') relations: string,
+  ) {
+    return this.chargesService.list(paginate, relations || '');
   }
 
   @IsPublic()

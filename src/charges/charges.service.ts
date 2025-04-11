@@ -11,6 +11,7 @@ import { ChargesRepository } from './charges.repository';
 import { randomUUID } from 'crypto';
 import { Charge } from './entities/charge.entity';
 import { PayChargeDto } from './dto/pay.dto';
+import { PaginateQuery } from 'nestjs-paginate';
 
 const avaliableGatewayPaymentMethods = {
   OPENPIX: ['PIX'],
@@ -29,6 +30,10 @@ export class ChargesService {
     return this.chargesRepository.findAll({
       relations: ['customer'],
     });
+  }
+
+  async list(paginate: PaginateQuery, relations?: string) {
+    return this.chargesRepository.list(paginate, relations.split(';'));
   }
 
   async findOneOrFail(chargeId: string) {
