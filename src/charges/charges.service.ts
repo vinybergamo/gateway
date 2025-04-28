@@ -92,7 +92,7 @@ export class ChargesService {
       correlationID: createChargeDto.correlationID ?? randomUUID(),
       description: createChargeDto.description,
       liqAmount: createChargeDto.amount,
-      customer,
+      customer: !!createChargeDto.customerId ? customer : null,
     });
 
     if (
