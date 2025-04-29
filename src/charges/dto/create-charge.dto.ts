@@ -2,6 +2,7 @@ import { Transform } from 'class-transformer';
 import {
   IsArray,
   IsEnum,
+  IsInt,
   IsOptional,
   IsPositive,
   IsString,
@@ -22,7 +23,7 @@ export class CreateChargeDto {
   @IsOptional()
   correlationID: string;
 
-  @IsPositive()
+  @IsInt()
   @IsOptional()
   additionalFee: number;
 

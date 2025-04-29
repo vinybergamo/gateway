@@ -89,6 +89,7 @@ export class ChargesService {
       ...createChargeDto,
       status: `PENDING`,
       amount: createChargeDto.amount,
+      additionalFee: createChargeDto.additionalFee ?? 0,
       correlationID: createChargeDto.correlationID ?? randomUUID(),
       description: createChargeDto.description,
       liqAmount: createChargeDto.amount,
